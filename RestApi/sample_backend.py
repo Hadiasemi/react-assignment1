@@ -48,14 +48,14 @@ def get_users():
 
 
 
-@app.route('/users/<id>')
-def get_user_id(id):
-   if id :
-      for user in users['users_list']:
-        if user['id'] == id:
-           return user
-      return ({})
-   return users
+# @app.route('/users/<id>')
+# def get_user_id(id):
+#    if id :
+#       for user in users['users_list']:
+#         if user['id'] == id:
+#            return user
+#       return ({})
+#    return users
 
 @app.route('/users', methods=['GET', 'POST'])
 def get_users_methods():
@@ -75,6 +75,27 @@ def get_users_methods():
       #resp.status_code = 200 #optionally, you can always set a response code. 
       # 200 is the default code for a normal response
       return resp
+
+@app.route('/users/<id>', methods=['GET', 'DELETE'])
+def get_user(id):
+    if id:
+        if request.method == 'GET':
+            for user in users['users_list']:
+                if user['id'] == id:
+                    return user
+            return ({})
+        elif request.method == 'DELETE':
+            for user in users['users_list']:
+                if user['id'] == id:
+                    users['users_list'].remove(user)
+                    resp = jsonify(success=True)
+                    resp.status_code = 204
+                    return resp
+            resp = jsonify(success=False)
+            resp.status_code = 404
+            resp.message = "Id Not Found"
+            return resp
+    return users
 
 if(__name__ == '__main__'):
    app.debug = True
