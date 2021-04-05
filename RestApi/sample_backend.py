@@ -44,6 +44,18 @@ def get_users():
       return subdict
    return users
 
+
+
+@app.route('/users/<id>')
+def get_user_id(id):
+   if id :
+      for user in users['users_list']:
+        if user['id'] == id:
+           return user
+      return ({})
+   return users
+
+
 if(__name__ == '__main__'):
    app.debug = True
    app.run()
