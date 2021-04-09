@@ -1,6 +1,11 @@
 from flask import Flask
 from flask import request
 from flask import jsonify
+import string
+import random
+from flask_cors import CORS
+
+
 
 users = { 
    'users_list' :
@@ -32,8 +37,12 @@ users = {
       }
    ]
 }
+def id_gen():
+    return "".join(random.choice(string.ascii_lowercase) for x in range(3)) + "".join(random.choice(string.digits) for x in range(3))
+
 
 app = Flask(__name__)
+CORS(app)
 
 @app.route('/users')
 def get_users():
@@ -65,36 +74,47 @@ def get_user_name(name):
       list_users = {'users_list': list(filter(match_name, list_users['users_list']))}
    return list_users 
 
-@app.route('/users', methods=['GET', 'POST'])
+@app.route('/users', methods=['GET', 'POST','DELETE'])
 def get_users_methods():
+   find_users = users
    if request.method == 'GET':
       search_username = request.args.get('name')
+      search_userjob = request.args.get('job')
       if search_username :
-         subdict = {'users_list' : []}
-         for user in users['users_list']:
-            if user['name'] == search_username:
-               subdict['users_list'].append(user)
-         return subdict
-      return users
+         match_name = lambda user: user['users_list'] == search_username
+         find_users = {'users_list': list(filter(match_name,find_users['users_list']))}
+      if search_userjob:
+         match_job = lambda user: user['job'] == search_userjob
+         find_users = {'users_list': list(filter(match_job,find_users['users_list']))}
+      return find_users
    elif request.method == 'POST':
       userToAdd = request.get_json()
+      userToAdd['id']=id_gen()
       users['users_list'].append(userToAdd)
+      resp = jsonify(userToAdd)
+      resp.status_code = 201 #optionally, you can always set a response code. 
+      # 200 is the default code for a normal response
+      return resp
+   elif request.method == 'DELETE':
+      # need to send whole user to the request
+      userToDelete = request.get_json()
+      users['users_list'].remove(userToDelete)
       resp = jsonify(success=True)
       #resp.status_code = 200 #optionally, you can always set a response code. 
       # 200 is the default code for a normal response
       return resp
 
-@app.route('/users/<name>', methods=['GET', 'DELETE'])
-def get_user(name):
-    if name:
+@app.route('/users/<id>', methods=['GET', 'DELETE'])
+def get_user(id):
+    if id:
         if request.method == 'GET':
             for user in users['users_list']:
-                if user['name'] == name:
+                if user['id'] == id:
                     return user
             return ({})
         elif request.method == 'DELETE':
             for user in users['users_list']:
-                if user['name'] == name:
+                if user['id'] == id:
                     users['users_list'].remove(user)
                     resp = jsonify(success=True)
                     resp.status_code = 204
@@ -105,6 +125,6 @@ def get_user(name):
             return resp
     return users
 
-if(__name__ == '__main__'):
-   app.debug = True
-   app.run()
+# if(__name__ == '__main__'):
+#    app.debug = True
+#    app.run()

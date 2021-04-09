@@ -64,3 +64,5 @@ fi
 if [ -n "${BASH:-}" -o -n "${ZSH_VERSION:-}" ] ; then
     hash -r 2> /dev/null
 fi
+export FLASK_APP=sample_backend.py
+export FLASK_ENV=development

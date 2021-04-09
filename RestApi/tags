@@ -1,2 +1,3 @@
 !_TAG_FILE_SORTED	2	/0=unsorted, 1=sorted, 2=foldcase/
-FLASK_APP	/Users/hadiasemi/Desktop/react-assignment1/RestApi/Makefile	/^	export FLASK_APP = sample_backend.py && export FLASK_ENV = development$/;"	m	language:Make
+LASK_APP	/Users/hadiasemi/Desktop/react-assignment1/RestApi/Makefile	/^    set FLASK_APP = sample_backend.py$/;"	m	language:Make
+LASK_ENV	/Users/hadiasemi/Desktop/react-assignment1/RestApi/Makefile	/^    set FLASK_ENV=development $/;"	m	language:Make
