@@ -57,6 +57,14 @@ def get_users():
 #       return ({})
 #    return users
 
+@app.route('/users/<name>')
+def get_user_name(name):
+   list_users = users
+   if name :
+      match_name = lambda user: user['name'] == name
+      list_users = {'users_list': list(filter(match_name, list_users['users_list']))}
+   return list_users 
+
 @app.route('/users', methods=['GET', 'POST'])
 def get_users_methods():
    if request.method == 'GET':
@@ -76,17 +84,17 @@ def get_users_methods():
       # 200 is the default code for a normal response
       return resp
 
-@app.route('/users/<id>', methods=['GET', 'DELETE'])
-def get_user(id):
-    if id:
+@app.route('/users/<name>', methods=['GET', 'DELETE'])
+def get_user(name):
+    if name:
         if request.method == 'GET':
             for user in users['users_list']:
-                if user['id'] == id:
+                if user['name'] == name:
                     return user
             return ({})
         elif request.method == 'DELETE':
             for user in users['users_list']:
-                if user['id'] == id:
+                if user['name'] == name:
                     users['users_list'].remove(user)
                     resp = jsonify(success=True)
                     resp.status_code = 204
