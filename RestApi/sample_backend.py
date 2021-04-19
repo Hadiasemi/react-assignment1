@@ -3,38 +3,40 @@ from flask import request
 from flask import jsonify
 import string
 import random
+# for linking frontend-backend
 from flask_cors import CORS
 
-
+# for mongo db
+from model_mongodb import User
 
 users = { 
    'users_list' :
    [
-      { 
-         'id' : 'xyz789',
-         'name' : 'Charlie',
-         'job': 'Janitor',
-      },
-      {
-         'id' : 'abc123', 
-         'name': 'Mac',
-         'job': 'Bouncer',
-      },
-      {
-         'id' : 'ppp222', 
-         'name': 'Mac',
-         'job': 'Professor',
-      }, 
-      {
-         'id' : 'yat999', 
-         'name': 'Dee',
-         'job': 'Aspring actress',
-      },
-      {
-         'id' : 'zap555', 
-         'name': 'Dennis',
-         'job': 'Bartender',
-      }
+      # { 
+      #    'id' : 'xyz789',
+      #    'name' : 'Charlie',
+      #    'job': 'Janitor',
+      # },
+      # {
+      #    'id' : 'abc123', 
+      #    'name': 'Mac',
+      #    'job': 'Bouncer',
+      # },
+      # {
+      #    'id' : 'ppp222', 
+      #    'name': 'Mac',
+      #    'job': 'Professor',
+      # }, 
+      # {
+      #    'id' : 'yat999', 
+      #    'name': 'Dee',
+      #    'job': 'Aspring actress',
+      # },
+      # {
+      #    'id' : 'zap555', 
+      #    'name': 'Dennis',
+      #    'job': 'Bartender',
+      # }
    ]
 }
 def id_gen():
@@ -80,12 +82,16 @@ def get_users_methods():
    if request.method == 'GET':
       search_username = request.args.get('name')
       search_userjob = request.args.get('job')
-      if search_username :
-         match_name = lambda user: user['users_list'] == search_username
-         find_users = {'users_list': list(filter(match_name,find_users['users_list']))}
-      if search_userjob:
-         match_job = lambda user: user['job'] == search_userjob
-         find_users = {'users_list': list(filter(match_job,find_users['users_list']))}
+      if search_userjob and search_username:
+          return User().find_users_by_name_job(search_username, search_userjob)
+      elif search_username :
+         # match_name = lambda user: user['users_list'] == search_username
+         # find_users = {'users_list': list(filter(match_name,find_users['users_list']))}
+         users = User().find_by_name(search_username)
+      elif search_userjob:
+         # match_job = lambda user: user['job'] == search_userjob
+         # find_users = {'users_list': list(filter(match_job,find_users['users_list']))}
+         return User().find_by_job(search_userjob)
       return find_users
    elif request.method == 'POST':
       userToAdd = request.get_json()
