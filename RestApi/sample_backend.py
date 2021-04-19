@@ -78,7 +78,7 @@ def get_user_name(name):
 
 @app.route('/users', methods=['GET', 'POST','DELETE'])
 def get_users_methods():
-   find_users = users
+   # find_users = users
    if request.method == 'GET':
       search_username = request.args.get('name')
       search_userjob = request.args.get('job')
@@ -92,7 +92,8 @@ def get_users_methods():
          # match_job = lambda user: user['job'] == search_userjob
          # find_users = {'users_list': list(filter(match_job,find_users['users_list']))}
          return User().find_by_job(search_userjob)
-      return find_users
+      return User().find_all()
+      
    elif request.method == 'POST':
       userToAdd = request.get_json()
       userToAdd['id']=id_gen()
